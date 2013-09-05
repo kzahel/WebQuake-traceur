@@ -10,7 +10,7 @@ Sbar.DontShowScores = function()
 	Sbar.showscores = false;
 };
 
-Sbar.Init = function()
+Sbar.A_Init = function()
 {
 	var i;
 
@@ -107,10 +107,10 @@ Sbar.Init = function()
 	Sbar.ibar = Draw.PicFromWad('IBAR');
 	Sbar.scorebar = Draw.PicFromWad('SCOREBAR');
 
-	Sbar.ranking = Draw.CachePic('ranking');
-	Sbar.complete = Draw.CachePic('complete');
-	Sbar.inter = Draw.CachePic('inter');
-	Sbar.finale = Draw.CachePic('finale');
+	await Sbar.ranking = Draw.A_CachePic('ranking');
+	await Sbar.complete = Draw.A_CachePic('complete');
+	await Sbar.inter = Draw.A_CachePic('inter');
+	await Sbar.finale = Draw.A_CachePic('finale');
 
 	Sbar.disc = Draw.PicFromWad('DISC');
 

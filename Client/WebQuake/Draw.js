@@ -16,7 +16,7 @@ Draw.CharToConback = function(num, dest)
 	}
 };
 
-Draw.Init = function()
+Draw.A_Init = function()
 {
 	var i;
 
@@ -36,7 +36,8 @@ Draw.Init = function()
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
 	Draw.conback = {};
-	var cb = COM.LoadFile('gfx/conback.lmp');
+    var cb;
+await cb = COM.A_LoadFile('gfx/conback.lmp');
 	if (cb == null)
 		Sys.Error('Couldn\'t load gfx/conback.lmp');
 	Draw.conback.width = 320;
@@ -47,16 +48,24 @@ Draw.Init = function()
 		Draw.CharToConback(ver.charCodeAt(i), 59829 - ((ver.length - i) << 3), 186);
 	Draw.conback.texnum = GL.LoadPicTexture(Draw.conback);
 
-	Draw.loading = Draw.CachePic('loading');
+    console.log('gettin cachepic...')
+    var tmp;
+	await tmp = Draw.A_CachePic('loading');
+    Draw.loading = tmp;
+    console.log('got cachepic...')
 	Draw.loadingElem = document.getElementById('loading');
 	Draw.loadingElem.src = Draw.PicToDataURL(Draw.loading);
 
+    console.log('settin bgimage')
 	document.body.style.backgroundImage = 'url("' + Draw.PicToDataURL(Draw.PicFromWad('BACKTILE')) + '")';
+    console.log('set bgimage')
 
 	GL.CreateProgram('Character', ['uCharacter', 'uDest', 'uOrtho'], ['aPoint'], ['tTexture']);
 	GL.CreateProgram('Fill', ['uRect', 'uOrtho', 'uColor'], ['aPoint'], []);
 	GL.CreateProgram('Pic', ['uRect', 'uOrtho'], ['aPoint'], ['tTexture']);
 	GL.CreateProgram('PicTranslate', ['uRect', 'uOrtho', 'uTop', 'uBottom'], ['aPoint'], ['tTexture', 'tTrans']);
+
+    console.log('drawinit returnin')
 };
 
 Draw.Character = function(x, y, num)
@@ -106,6 +115,7 @@ Draw.StringWhite = function(x, y, str)
 
 Draw.PicFromWad = function(name)
 {
+    console.log('picfromwad',name)
 	var buf = W.GetLumpName(name);
 	var p = {};
 	var view = new DataView(buf, 0, 8);
@@ -116,10 +126,16 @@ Draw.PicFromWad = function(name)
 	return p;
 };
 
-Draw.CachePic = function(path)
+Draw.CachePic = function(){
+    console.error("USE A_CachePic")
+    debugger;
+}
+
+Draw.A_CachePic = function(path)
 {
 	path = 'gfx/' + path + '.lmp';
-	var buf = COM.LoadFile(path);
+    var buf;
+await buf = COM.A_LoadFile(path);
 	if (buf == null)
 		Sys.Error('Draw.CachePic: failed to load ' + path);
 	var dat = {};
@@ -204,6 +220,7 @@ Draw.EndDisc = function()
 
 Draw.PicToDataURL = function(pic)
 {
+    console.log('pictodataurl')
 	var canvas = document.createElement('canvas');
 	canvas.width = pic.width;
 	canvas.height = pic.height;
@@ -216,5 +233,6 @@ Draw.PicToDataURL = function(pic)
 		trans32[i] = COM.LittleLong(VID.d_8to24table[pic.data[i]] + 0xff000000);
 	data.data.set(new Uint8Array(trans));
 	ctx.putImageData(data, 0, 0);
+    console.log('pictodataurl returning')
 	return canvas.toDataURL();
 };

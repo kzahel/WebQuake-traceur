@@ -941,7 +941,7 @@ M.Quit_Key = function(k)
 
 
 // Menu Subsystem
-M.Init = function()
+M.A_Init = function()
 {
 	Cmd.AddCommand('togglemenu', M.ToggleMenu_f);
 	Cmd.AddCommand('menu_main', M.Menu_Main_f);
@@ -955,44 +955,75 @@ M.Init = function()
 	Cmd.AddCommand('help', M.Menu_Help_f);
 	Cmd.AddCommand('menu_quit', M.Menu_Quit_f);
 
-	M.sfx_menu1 = S.PrecacheSound('misc/menu1.wav');
-	M.sfx_menu2 = S.PrecacheSound('misc/menu2.wav');
-	M.sfx_menu3 = S.PrecacheSound('misc/menu3.wav');
+    var tmp;
 
-	M.box_tl = Draw.CachePic('box_tl');
-	M.box_ml = Draw.CachePic('box_ml');
-	M.box_bl = Draw.CachePic('box_bl');
-	M.box_tm = Draw.CachePic('box_tm');
-	M.box_mm = Draw.CachePic('box_mm');
-	M.box_mm2 = Draw.CachePic('box_mm2');
-	M.box_bm = Draw.CachePic('box_bm');
-	M.box_tr = Draw.CachePic('box_tr');
-	M.box_mr = Draw.CachePic('box_mr');
-	M.box_br = Draw.CachePic('box_br');
+	await tmp = S.A_PrecacheSound('misc/menu1.wav');
+    M.sfx_menu1 = tmp;
+    await tmp = S.A_PrecacheSound('misc/menu2.wav');
+	M.sfx_menu2 = tmp
+    await tmp = S.A_PrecacheSound('misc/menu3.wav');
+	M.sfx_menu3 = tmp
+await tmp = Draw.A_CachePic('box_tl');
+	 M.box_tl = tmp
+await tmp = Draw.A_CachePic('box_ml');
+	 M.box_ml = tmp
+    console.log('loaded some stuff ...')
+    await tmp = Draw.A_CachePic('box_bl');
+	 M.box_bl = tmp
+    await tmp = Draw.A_CachePic('box_tm');
+	 M.box_tm = tmp
+    await tmp = Draw.A_CachePic('box_mm');
+	 M.box_mm = tmp
+    await tmp = Draw.A_CachePic('box_mm2');
+	 M.box_mm2 = tmp
+await tmp = Draw.A_CachePic('box_bm');
+	 M.box_bm = tmp
+await tmp = Draw.A_CachePic('box_tr');
+	 M.box_tr = tmp
+await tmp = Draw.A_CachePic('box_mr');
+	 M.box_mr = tmp
+await tmp = Draw.A_CachePic('box_br');
+	 M.box_br = tmp
+await tmp = Draw.A_CachePic('qplaque');
+	 M.qplaque = tmp
+    var tmp;
+    M.menudot = [];
+    await tmp = Draw.A_CachePic('menudot1');
+    M.menudot.push(tmp);
+    await tmp = Draw.A_CachePic('menudot2');
+    M.menudot.push(tmp);
+    await tmp = Draw.A_CachePic('menudot3');
+    M.menudot.push(tmp);
+    await tmp = Draw.A_CachePic('menudot4');
+    M.menudot.push(tmp);
+    await tmp = Draw.A_CachePic('menudot5');
+    M.menudot.push(tmp);
+    await tmp = Draw.A_CachePic('menudot6');
+    M.menudot.push(tmp);
 
-	M.qplaque = Draw.CachePic('qplaque');
+await tmp = Draw.A_CachePic('ttl_main');
+	 M.ttl_main = tmp
+await tmp = Draw.A_CachePic('mainmenu');
+	 M.mainmenu = tmp
 
-	M.menudot = [
-		Draw.CachePic('menudot1'),
-		Draw.CachePic('menudot2'),
-		Draw.CachePic('menudot3'),
-		Draw.CachePic('menudot4'),
-		Draw.CachePic('menudot5'),
-		Draw.CachePic('menudot6')
-	];
+await tmp = Draw.A_CachePic('ttl_sgl');
+	 M.ttl_sgl = tmp
+await tmp = Draw.A_CachePic('sp_menu');
+	 M.sp_menu = tmp
+await tmp = Draw.A_CachePic('p_load');
+	 M.p_load = tmp
+await tmp = Draw.A_CachePic('p_save');
+	 M.p_save = tmp
 
-	M.ttl_main = Draw.CachePic('ttl_main');
-	M.mainmenu = Draw.CachePic('mainmenu');
+await tmp = Draw.A_CachePic('p_multi');
+	 M.p_multi = tmp
+await tmp = Draw.A_CachePic('bigbox');
+	 M.bigbox = tmp
+await tmp = Draw.A_CachePic('menuplyr');
+	 M.menuplyr = tmp
 
-	M.ttl_sgl = Draw.CachePic('ttl_sgl');
-	M.sp_menu = Draw.CachePic('sp_menu');
-	M.p_load = Draw.CachePic('p_load');
-	M.p_save = Draw.CachePic('p_save');
-
-	M.p_multi = Draw.CachePic('p_multi');
-	M.bigbox = Draw.CachePic('bigbox');
-	M.menuplyr = Draw.CachePic('menuplyr');
-	var buf = COM.LoadFile('gfx/menuplyr.lmp');
+    var buf;
+        await buf = COM.A_LoadFile('gfx/menuplyr.lmp');
 	var data = GL.ResampleTexture(M.menuplyr.data, M.menuplyr.width, M.menuplyr.height, 64, 64);
 	var trans = new Uint8Array(new ArrayBuffer(16384));
 	var i, p;
@@ -1016,17 +1047,26 @@ M.Init = function()
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
-	M.p_option = Draw.CachePic('p_option');
-	M.ttl_cstm = Draw.CachePic('ttl_cstm');
+await tmp = Draw.A_CachePic('p_option');
+	M.p_option = tmp
+await tmp = Draw.A_CachePic('ttl_cstm');
+	M.ttl_cstm = tmp
 
-	M.help_pages = [
-		Draw.CachePic('help0'),
-		Draw.CachePic('help1'),
-		Draw.CachePic('help2'),
-		Draw.CachePic('help3'),
-		Draw.CachePic('help4'),
-		Draw.CachePic('help5')
-	];
+    var tmp;
+    M.help_pages = [];
+    await tmp = Draw.A_CachePic('help0');
+    M.help_pages.push(tmp);
+    await tmp = Draw.A_CachePic('help1');
+    M.help_pages.push(tmp);
+    await tmp = Draw.A_CachePic('help2');
+    M.help_pages.push(tmp);
+    await tmp = Draw.A_CachePic('help3');
+    M.help_pages.push(tmp);
+    await tmp = Draw.A_CachePic('help4');
+    M.help_pages.push(tmp);
+    await tmp = Draw.A_CachePic('help5');
+    M.help_pages.push(tmp);
+
 };
 
 M.Draw = function()

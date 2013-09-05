@@ -79,7 +79,8 @@ Cmd.Exec_f = function()
 		Con.Print('exec <filename> : execute a script file\n');
 		return;
 	}
-	var f = COM.LoadTextFile(Cmd.argv[1]);
+    var f;
+        await f = COM.A_LoadTextFile(Cmd.argv[1]);
 	if (f == null)
 	{
 		Con.Print('couldn\'t exec ' + Cmd.argv[1] + '\n');
@@ -139,7 +140,7 @@ Cmd.TokenizeString = function(text)
 {
 	Cmd.argv = [];
 	var i, c;
-	for (;;)
+    while(true)
 	{
 		for (i = 0; i < text.length; ++i)
 		{

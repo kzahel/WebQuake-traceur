@@ -165,7 +165,7 @@ SCR.SizeDown_f = function()
 	SCR.recalc_refdef = true;
 };
 
-SCR.Init = function()
+SCR.A_Init = function()
 {
 	SCR.fov = Cvar.RegisterVariable('fov', '90');
 	SCR.viewsize = Cvar.RegisterVariable('viewsize', '100', true);
@@ -179,7 +179,9 @@ SCR.Init = function()
 	Cmd.AddCommand('sizedown', SCR.SizeDown_f);
 	SCR.net = Draw.PicFromWad('NET');
 	SCR.turtle = Draw.PicFromWad('TURTLE');
-	SCR.pause = Draw.CachePic('pause');
+    var tmp;
+    await tmp = Draw.A_CachePic('pause');
+    SCR.pause = tmp;
 };
 
 SCR.count = 0;

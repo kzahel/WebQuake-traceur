@@ -50,7 +50,7 @@ Mod.PointInLeaf = function(p, model)
 		Sys.Error('Mod.PointInLeaf: bad model');
 	var node = model.nodes[0];
 	var normal;
-	for (;;)
+    while(true)
 	{
 		if (node.contents < 0)
 			return node;
@@ -130,11 +130,15 @@ Mod.FindName = function(name)
 	}
 };
 
-Mod.LoadModel = function(mod, crash)
+Mod.A_LoadModel = function(mod, crash)
 {
+    //console.log("Mod.A_LoadModel",mod)
 	if (mod.needload !== true)
 		return mod;
-	var buf = COM.LoadFile(mod.name);
+    var buf;
+    //console.log('loadin file',mod.name)
+        await buf = COM.A_LoadFile(mod.name);
+    //console.log('loaded file')
 	if (buf == null)
 	{
 		if (crash === true)
@@ -157,9 +161,13 @@ Mod.LoadModel = function(mod, crash)
 	return mod;
 };
 
-Mod.ForName = function(name, crash)
+Mod.A_ForName = function(name, crash)
 {
-	return Mod.LoadModel(Mod.FindName(name), crash);
+    //console.log("Mod.A_ForName");
+    var tmp;
+    await tmp = Mod.A_LoadModel(Mod.FindName(name), crash);
+    //console.log('loaded model',tmp)
+    return tmp;
 };
 
 /*

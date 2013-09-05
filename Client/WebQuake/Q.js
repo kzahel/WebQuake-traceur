@@ -42,7 +42,7 @@ Q.atoi = function(str)
 	if ((c === 48) && ((c2 === 120) || (c2 === 88)))
 	{
 		ptr += 2;
-		for (;;)
+            while(true)
 		{
 			c = str.charCodeAt(ptr++);
 			if ((c >= 48) && (c <= 57))
@@ -61,7 +61,7 @@ Q.atoi = function(str)
 			return 0;
 		return sign * c2;
 	}
-	for (;;)
+    while(true)
 	{
 		c = str.charCodeAt(ptr++);
 		if ((Q.isNaN(c) === true) || (c <= 47) || (c >= 58))
@@ -92,7 +92,7 @@ Q.atof = function(str)
 	{
 		ptr += 2;
 		val = 0.0;
-		for (;;)
+            while(true)
 		{
 			c = str.charCodeAt(ptr++);
 			if ((c >= 48) && (c <= 57))

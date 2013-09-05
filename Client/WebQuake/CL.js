@@ -88,7 +88,7 @@ CL.GetMessage = function()
 	};
 
 	var r;
-	for (;;)
+	while (true)
 	{
 		r = NET.GetMessage(CL.cls.netcon);
 		if ((r !== 1) && (r !== 2))
@@ -174,7 +174,8 @@ CL.PlayDemo_f = function()
 	CL.Disconnect();
 	var name = COM.DefaultExtension(Cmd.argv[1], '.dem');
 	Con.Print('Playing demo from ' + name + '.\n');
-	var demofile = COM.LoadFile(name);
+    var demofile;
+        await demofile = COM.A_LoadFile(name);
 	if (demofile == null)
 	{
 		Con.Print('ERROR: couldn\'t open.\n');
@@ -914,9 +915,14 @@ CL.ReadFromServer = function()
 	CL.state.oldtime = CL.state.time;
 	CL.state.time += Host.frametime;
 	var ret;
-	for (;;)
+    while(true)
 	{
+            if (Host._FrameLock) { 
+                console.log('not doing ReadFromServer::CL.GetMessage, frame lock active')
+                break; 
+            }
 		ret = CL.GetMessage();
+            //console.log("CL.ReadFromServer",ret)
 		if (ret === -1)
 			Host.Error('CL.ReadFromServer: lost server connection');
 		if (ret === 0)
@@ -965,11 +971,11 @@ CL.SendCmd = function()
 	CL.cls.message.cursize = 0;
 };
 
-CL.Init = function()
+CL.A_Init = function()
 {
 	CL.ClearState();
 	CL.InitInput();
-	CL.InitTEnts();
+	await CL.A_InitTEnts();
 	CL.name = Cvar.RegisterVariable('_cl_name', 'player', true);
 	CL.color = Cvar.RegisterVariable('_cl_color', '0', true);
 	CL.upspeed = Cvar.RegisterVariable('cl_upspeed', '200');
@@ -1044,7 +1050,7 @@ CL.EntityNum = function(num)
 {
 	if (num < CL.entities.length)
 		return CL.entities[num];
-	for (; CL.entities.length <= num; )
+	while ( CL.entities.length <= num )
 	{
 		CL.entities[CL.entities.length] = {
 			num: num,
@@ -1097,7 +1103,7 @@ CL.KeepaliveMessage = function()
 	var olddata = new Uint8Array(8192);
 	olddata.set(new Uint8Array(NET.message.data, 0, oldsize));
 	var ret;
-	for (;;)
+    while(true)
 	{
 		ret = CL.GetMessage();
 		switch (ret)
@@ -1127,8 +1133,11 @@ CL.KeepaliveMessage = function()
 	CL.cls.message.cursize = 0;
 };
 
-CL.ParseServerInfo = function()
+CL.A_ParseServerInfo = function()
 {
+
+    //console.log("%cPARSE SERVER INFO","color:#f00")
+
 	Con.DPrint('Serverinfo packet received.\n');
 	CL.ClearState();
 	var i = MSG.ReadLong();
@@ -1160,17 +1169,19 @@ CL.ParseServerInfo = function()
 
 	var str;
 	var nummodels, model_precache = [];
-	for (nummodels = 1; ; ++nummodels)
+	for (nummodels = 1; true; ++nummodels)
 	{
 		str = MSG.ReadString();
+            //console.log("MODEL PRECACHE",str)
 		if (str.length === 0)
 			break;
 		model_precache[nummodels] = str;
 	}
 	var numsounds, sound_precache = [];
-	for (numsounds = 1; ; ++numsounds)
+	for (numsounds = 1; true; ++numsounds)
 	{
 		str = MSG.ReadString();
+            //console.log("SOUND PRECACHE",str)
 		if (str.length === 0)
 			break;
 		sound_precache[numsounds] = str;
@@ -1179,24 +1190,35 @@ CL.ParseServerInfo = function()
 	CL.state.model_precache = [];
 	for (i = 1; i < nummodels; ++i)
 	{
-		CL.state.model_precache[i] = Mod.ForName(model_precache[i]);
+            var tmp;
+            //console.log('loadin model',i);
+            await tmp = Mod.A_ForName(model_precache[i]);
+            //console.log('loaded model',i)
+		CL.state.model_precache[i] = tmp;
 		if (CL.state.model_precache[i] == null)
 		{
+                    //console.log("model NOT FOUND")
 			Con.Print('Model ' + model_precache[i] + ' not found\n');
 			return;
 		}
 		CL.KeepaliveMessage();
 	}
+
 	CL.state.sound_precache = [];
 	for (i = 1; i < numsounds; ++i)
 	{
-		CL.state.sound_precache[i] = S.PrecacheSound(sound_precache[i]);
+            var tmp
+            await tmp = S.A_PrecacheSound(sound_precache[i])
+		CL.state.sound_precache[i] = tmp;
 		CL.KeepaliveMessage();
 	}
 
 	CL.state.worldmodel = CL.state.model_precache[1];
 	CL.EntityNum(0).model = CL.state.worldmodel;
 	R.NewMap();
+                    Host._FrameLock = false;
+                    console.log("PARSED server info. releasing lock")
+
 	Host.noclip_anglehack = false;
 };
 
@@ -1378,7 +1400,7 @@ CL.ParseServerMessage = function()
 	MSG.BeginReading();
 
 	var cmd, i;
-	for (;;)
+    while(true)
 	{
 		if (MSG.badread === true)
 			Host.Error('CL.ParseServerMessage: Bad server message');
@@ -1399,6 +1421,9 @@ CL.ParseServerMessage = function()
 		}
 
 		CL.Shownet('svc_' + CL.svc_strings[cmd]);
+
+            //console.log("%cSERVER COMMAND","color:#f00",cmd, CL.svc_strings[cmd])
+
 		switch (cmd)
 		{
 		case Protocol.svc.nop:
@@ -1430,7 +1455,9 @@ CL.ParseServerMessage = function()
 			V.ParseDamage();
 			continue;
 		case Protocol.svc.serverinfo:
-			CL.ParseServerInfo();
+                    console.log("PARSIN server info. setting lock")
+                    Host._FrameLock = true;
+			CL.A_ParseServerInfo();
 			SCR.recalc_refdef = true;
 			continue;
 		case Protocol.svc.setangle:
@@ -1499,10 +1526,10 @@ CL.ParseServerMessage = function()
 			CL.SignonReply();
 			continue;
 		case Protocol.svc.killedmonster:
-			++CL.state.stats[Def.stat.monsters];
+			//++CL.state.stats[Def.stat.monsters]; // TODO FIX
 			continue;
 		case Protocol.svc.foundsecret:
-			++CL.state.stats[Def.stat.secrets];
+			//++CL.state.stats[Def.stat.secrets]; // TODO FIX
 			continue;
 		case Protocol.svc.updatestat:
 			i = MSG.ReadByte();
@@ -1511,7 +1538,7 @@ CL.ParseServerMessage = function()
 			CL.state.stats[i] = MSG.ReadLong();
 			continue;
 		case Protocol.svc.spawnstaticsound:
-			CL.ParseStaticSound();
+                    CL.ParseStaticSound();
 			continue;
 		case Protocol.svc.cdtrack:
 			CL.state.cdtrack = MSG.ReadByte();
@@ -1543,6 +1570,8 @@ CL.ParseServerMessage = function()
 			continue;
 		}
 		Host.Error('CL.ParseServerMessage: Illegible server message\n');
+
+
 	}
 };
 
@@ -1550,15 +1579,24 @@ CL.ParseServerMessage = function()
 
 CL.temp_entities = [];
 
-CL.InitTEnts = function()
+CL.A_InitTEnts = function()
 {
-	CL.sfx_wizhit = S.PrecacheSound('wizard/hit.wav');
-	CL.sfx_knighthit = S.PrecacheSound('hknight/hit.wav');
-	CL.sfx_tink1 = S.PrecacheSound('weapons/tink1.wav');
-	CL.sfx_ric1 = S.PrecacheSound('weapons/ric1.wav');
-	CL.sfx_ric2 = S.PrecacheSound('weapons/ric2.wav');
-	CL.sfx_ric3 = S.PrecacheSound('weapons/ric3.wav');
-	CL.sfx_r_exp3 = S.PrecacheSound('weapons/r_exp3.wav');
+    //console.log('InitTEnts');
+    var tmp;
+    await tmp = S.A_PrecacheSound('wizard/hit.wav');
+	 CL.sfx_wizhit = tmp
+    await tmp = S.A_PrecacheSound('hknight/hit.wav');
+	 CL.sfx_knighthit = tmp
+    await tmp = S.A_PrecacheSound('weapons/tink1.wav');
+	 CL.sfx_tink1 = tmp
+    await tmp = S.A_PrecacheSound('weapons/ric1.wav');
+	 CL.sfx_ric1 = tmp
+    await tmp = S.A_PrecacheSound('weapons/ric2.wav');
+	 CL.sfx_ric2 = tmp
+    await tmp = S.A_PrecacheSound('weapons/ric3.wav');
+	 CL.sfx_ric3 = tmp
+    await tmp = S.A_PrecacheSound('weapons/r_exp3.wav');
+	 CL.sfx_r_exp3 = tmp
 };
 
 CL.ParseBeam = function(m)
@@ -1715,7 +1753,7 @@ CL.UpdateTEnts = function()
 			dist[1] /= d;
 			dist[2] /= d;
 		}
-		for (; d > 0.0; )
+		while (d > 0.0)
 		{
 			ent = CL.NewTempEntity();
 			ent.origin = [org[0], org[1], org[2]];

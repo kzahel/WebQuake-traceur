@@ -259,8 +259,23 @@ Host._Frame = function()
 
 Host.timetotal = 0.0;
 Host.timecount = 0;
-Host.Frame = function()
+
+Host._FrameLock = false;
+
+Host.FrameTick = function(timestamp) {
+    if (Host._FrameLock) {
+        console.log('Frame Lock, skipping tick')
+        requestAnimationFrame(Host.FrameTick)
+        return;
+    }
+    requestAnimationFrame(Host.FrameTick)
+    Host.Frame(timestamp)
+}
+
+Host.Frame = function(timestamp)
 {
+
+    //console.log("%cHost.Frame","color:#ff0",timestamp)
 	if (Host.serverprofile.value === 0)
 	{
 		Host._Frame();
@@ -283,15 +298,21 @@ Host.Frame = function()
 	Con.Print('serverprofile: ' + (c <= 9 ? ' ' : '') + c + ' clients ' + (m <= 9 ? ' ' : '') + m + ' msec\n');
 };
 
-Host.Init = function()
+Host.A_Init = function()
 {
 	Host.oldrealtime = Sys.FloatTime();
 	Cmd.Init();
 	V.Init();
 	Chase.Init();
-	COM.Init();
+    console.log("COM INITING")
+	await COM.A_Init();
+    console.log("COM inited")
 	Host.InitLocal();
-	W.LoadWadFile('gfx.wad');
+    console.log("loadin wad")
+	await W.A_LoadWadFile('gfx.wad');
+
+//	W.LoadWadFile('gfx.wad');
+    console.log("loaded wad")
 	Key.Init();
 	Con.Init();
 	PR.Init();
@@ -299,19 +320,31 @@ Host.Init = function()
 	NET.Init();
 	SV.Init();
 	Con.Print(Def.timedate);
-	VID.Init();
-	Draw.Init();
-	SCR.Init();
+    console.log("VID initn")
+	await VID.A_Init();
+    console.log("VID initED. draw init now")
+	await Draw.A_Init();
+    console.log('draw INITd...');
+	await SCR.A_Init();
+    console.log('SCR INITd...');
 	R.Init();
-	S.Init();
-	M.Init();
-	CDAudio.Init();
-	Sbar.Init();
-	CL.Init();
+    console.log('R INITd...');
+	await S.A_Init();
+    console.log('sound INITD...');
+	await M.A_Init();
+    console.log('menu INITD...');
+	await CDAudio.A_Init();
+    console.log('cdaudio INITD...');
+	await Sbar.A_Init();
+    console.log('sbar INITD...');
+	await CL.A_Init();
+    console.log('cl INITD...');
 	IN.Init();
+    console.log('IN INITD...');
 	Cmd.text = 'exec quake.rc\n' + Cmd.text;
 	Host.initialized = true;
 	Sys.Print('========Quake Initialized=========\n');
+    return DeferSoon();
 };
 
 Host.Shutdown = function()
@@ -516,7 +549,7 @@ Host.Map_f = function()
 	Key.dest.value = Key.dest.game;
 	SCR.BeginLoadingPlaque();
 	SV.svs.serverflags = 0;
-	SV.SpawnServer(Cmd.argv[1]);
+	await SV.A_SpawnServer(Cmd.argv[1]);
 	if (SV.server.active !== true)
 		return;
 	CL.cls.spawnparms = '';
@@ -539,13 +572,13 @@ Host.Changelevel_f = function()
 		return;
 	}
 	SV.SaveSpawnparms();
-	SV.SpawnServer(Cmd.argv[1]);
+	SV.A_SpawnServer(Cmd.argv[1]);
 };
 
 Host.Restart_f = function()
 {
 	if ((CL.cls.demoplayback !== true) && (SV.server.active === true) && (Cmd.client !== true))
-		SV.SpawnServer(PR.GetString(PR.globals_int[PR.globalvars.mapname]));
+		SV.A_SpawnServer(PR.GetString(PR.globals_int[PR.globalvars.mapname]));
 };
 
 Host.Reconnect_f = function()
@@ -732,7 +765,7 @@ Host.Loadgame_f = function()
 
 	var time = parseFloat(f[20]);
 	CL.Disconnect();
-	SV.SpawnServer(f[19]);
+	SV.A_SpawnServer(f[19]);
 	if (SV.server.active !== true)
 	{
 		Con.Print('Couldn\'t load map\n');
@@ -770,7 +803,7 @@ Host.Loadgame_f = function()
 	f[f.length] = '';
 	var entnum = 0, ent, j;
 	var data = f.slice(i).join('\n');
-	for (;;)
+    while(true)
 	{
 		data = COM.Parse(data);
 		if (data == null)

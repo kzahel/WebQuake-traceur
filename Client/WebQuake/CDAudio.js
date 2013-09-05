@@ -112,7 +112,7 @@ CDAudio.Update = function()
 		CDAudio.cd.volume = CDAudio.cdvolume;
 };
 
-CDAudio.Init = function()
+CDAudio.A_Init = function()
 {
 	Cmd.AddCommand('cd', CDAudio.CD_f);
 	if (COM.CheckParm('-nocdaudio') != null)
@@ -124,8 +124,9 @@ CDAudio.Init = function()
 		track = '/media/quake' + (i <= 9 ? '0' : '') + i + '.ogg';
 		for (j = COM.searchpaths.length - 1; j >= 0; --j)
 		{
-			xhr.open('HEAD', COM.searchpaths[j].filename + track, false);
-			xhr.send();
+			xhr.open('HEAD', COM.searchpaths[j].filename + track, true);
+			//xhr.send();
+                    await xhrsend(xhr)
 			if ((xhr.status >= 200) && (xhr.status <= 299))
 			{
 				CDAudio.known[i - 1] = COM.searchpaths[j].filename + track;

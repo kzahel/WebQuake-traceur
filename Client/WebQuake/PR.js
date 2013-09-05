@@ -295,9 +295,10 @@ PR.GlobalStringNoContents = function(ofs)
 	return line;
 };
 
-PR.LoadProgs = function()
+PR.A_LoadProgs = function()
 {
-	var progs = COM.LoadFile('progs.dat');
+    var progs;
+        await progs = COM.A_LoadFile('progs.dat');
 	if (progs == null)
 		Sys.Error('PR.LoadProgs: couldn\'t load progs.dat');
 	Con.DPrint('Programs occupy ' + (progs.byteLength >> 10) + 'K.\n');
@@ -527,7 +528,7 @@ PR.Profile_f = function()
 	if (SV.server.active !== true)
 		return;
 	var num = 0, max, best, i, f, profile;
-	for (;;)
+    while(true)
 	{
 		max = 0;
 		best = null;
@@ -610,7 +611,7 @@ PR.ExecuteProgram = function(fnum)
 	var s = PR.EnterFunction(PR.functions[fnum]);
 	var st, ed, ptr, newf;
 
-	for (;;)
+    while(true)
 	{
 		++s;
 		st = PR.statements[s];

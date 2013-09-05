@@ -11,7 +11,7 @@ S.listener_up = [0.0, 0.0, 0.0];
 
 S.known_sfx = [];
 
-S.Init = function()
+S.A_Init = function()
 {
 	Con.Print('\nSound Initialization\n');
 	Cmd.AddCommand('play', S.Play);
@@ -37,7 +37,10 @@ S.Init = function()
 	var i, ambient_sfx = ['water1', 'wind2'], ch, nodes;
 	for (i = 0; i < ambient_sfx.length; ++i)
 	{
-		ch = {sfx: S.PrecacheSound('ambience/' + ambient_sfx[i] + '.wav'), end: 0.0, master_vol: 0.0};
+            var tmp;
+            await tmp = S.A_PrecacheSound('ambience/' + ambient_sfx[i] + '.wav')
+            
+		ch = {sfx: tmp, end: 0.0, master_vol: 0.0};
 		S.ambient_channels[i] = ch;
 		if (S.LoadSound(ch.sfx) !== true)
 			continue;
@@ -64,10 +67,13 @@ S.Init = function()
 			ch.audio = ch.sfx.cache.data.cloneNode();
 	}
 
-	Con.sfx_talk = S.PrecacheSound('misc/talk.wav');
+    var tmp;
+    await tmp = S.A_PrecacheSound('misc/talk.wav');
+
+    Con.sfx_talk = tmp;
 };
 
-S.PrecacheSound = function(name)
+S.A_PrecacheSound = function(name)
 {
 	if (S.nosound.value !== 0)
 		return;
@@ -86,7 +92,7 @@ S.PrecacheSound = function(name)
 		sfx = S.known_sfx[i];
 	}
 	if (S.precache.value !== 0)
-		S.LoadSound(sfx);
+		await S.A_LoadSound(sfx);
 	return sfx;
 };
 
@@ -681,34 +687,46 @@ S.Update = function(origin, forward, right, up)
 	S.UpdateStaticSounds();
 };
 
+// TODO A_
 S.Play = function()
 {
+    //console.log("S.Play")
 	if (S.nosound.value !== 0)
 		return;
 	var i, sfx;
 	for (i = 1; i < Cmd.argv.length; ++i)
 	{
-		sfx = S.PrecacheSound(COM.DefaultExtension(Cmd.argv[i], '.wav'));
+		await sfx = S.A_PrecacheSound(COM.DefaultExtension(Cmd.argv[i], '.wav'));
 		if (sfx != null)
 			S.StartSound(CL.state.viewentity, 0, sfx, S.listener_origin, 1.0, 1.0);
 	}
 };
 
+
+// TODO A_
 S.PlayVol = function()
 {
+    //console.log("S.PlayVol")
 	if (S.nosound.value !== 0)
 		return;
 	var i, sfx;
 	for (i = 1; i < Cmd.argv.length; i += 2)
 	{
-		sfx = S.PrecacheSound(COM.DefaultExtension(Cmd.argv[i], '.wav'));
+		await sfx = S.A_PrecacheSound(COM.DefaultExtension(Cmd.argv[i], '.wav'));
 		if (sfx != null)
 			S.StartSound(CL.state.viewentity, 0, sfx, S.listener_origin, Q.atof(Cmd.argv[i + 1]), 1.0);
 	}
 };
 
-S.LoadSound = function(s)
+S.LoadSound = function(s) {
+    //console.log("S.A_LoadSound",s)
+	if (s.cache != null)
+		return true;
+}
+
+S.A_LoadSound = function(s)
 {
+    //console.log("S.A_LoadSound",s)
 	if (S.nosound.value !== 0)
 		return;
 	if (s.cache != null)
@@ -716,7 +734,8 @@ S.LoadSound = function(s)
 
 	var sc = {};
 
-	var data = COM.LoadFile('sound/' + s.name);
+    var data;
+    await data = COM.A_LoadFile('sound/' + s.name);
 	if (data == null)
 	{
 		Con.Print('Couldn\'t load sound/' + s.name + '\n');

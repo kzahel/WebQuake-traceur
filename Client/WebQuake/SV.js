@@ -229,7 +229,7 @@ SV.fatpvs = [];
 SV.CheckForNewClients = function()
 {
 	var ret, i;
-	for (;;)
+    while(true)
 	{
 		ret = NET.CheckNewConnections();
 		if (ret == null)
@@ -250,7 +250,7 @@ SV.CheckForNewClients = function()
 SV.AddToFatPVS = function(org, node)
 {
 	var pvs, i, normal, d;
-	for (;;)
+    while(true)
 	{
 		if (node.contents < 0)
 		{
@@ -666,7 +666,7 @@ SV.SaveSpawnparms = function()
 	}
 };
 
-SV.SpawnServer = function(server)
+SV.A_SpawnServer = function(server)
 {
 	var i;
 
@@ -696,7 +696,7 @@ SV.SpawnServer = function(server)
 	Con.DPrint('Clearing memory\n');
 	Mod.ClearAll();
 
-	PR.LoadProgs();
+	await PR.A_LoadProgs();
 
 	SV.server.edicts = [];
 	var ed;
@@ -738,7 +738,9 @@ SV.SpawnServer = function(server)
 	SV.server.lastcheck = 0;
 	SV.server.lastchecktime = 0.0;
 	SV.server.modelname = 'maps/' + server + '.bsp';
-	SV.server.worldmodel = Mod.ForName(SV.server.modelname);
+    var tmp
+    await tmp = Mod.A_ForName(SV.server.modelname);
+	SV.server.worldmodel = tmp
 	if (SV.server.worldmodel == null)
 	{
 		Con.Print('Couldn\'t spawn server ' + SV.server.modelname + '\n');
@@ -756,7 +758,8 @@ SV.SpawnServer = function(server)
 	for (i = 1; i <= SV.server.worldmodel.submodels.length; ++i)
 	{
 		SV.server.model_precache[i + 1] = '*' + i;
-		SV.server.models[i + 1] = Mod.ForName('*' + i);
+            await tmp = Mod.A_ForName('*' + i);
+	    SV.server.models[i + 1] = tmp;
 	}
 
 	SV.server.lightstyles = [];
@@ -821,7 +824,7 @@ SV.CheckBottom = function(ent)
 		ent.v_float[PR.entvars.origin1] + ent.v_float[PR.entvars.maxs1],
 		ent.v_float[PR.entvars.origin2] + ent.v_float[PR.entvars.maxs2]
 	];
-	for (;;)
+    while(true)
 	{
 		if (SV.PointContents([mins[0], mins[1], mins[2] - 1.0]) !== Mod.contents.solid)
 			break;
@@ -1739,8 +1742,10 @@ SV.Physics = function()
 		}
 		Sys.Error('SV.Physics: bad movetype ' + (ent.v_float[PR.entvars.movetype] >> 0));
 	}
-	if (PR.globals_float[PR.globalvars.force_retouch] !== 0.0)
-		--PR.globals_float[PR.globalvars.force_retouch];
+    if (PR.globals_float[PR.globalvars.force_retouch] !== 0.0) {
+		//--PR.globals_float[PR.globalvars.force_retouch];
+            PR.globals_float[PR.globalvars.force_retouch] = PR.globals_float[PR.globalvars.force_retouch] - 1;
+    }
 	SV.server.time += Host.frametime;
 };
 
@@ -2015,7 +2020,7 @@ SV.ReadClientMessage = function()
 		if (ret === 0)
 			return true;
 		MSG.BeginReading();
-		for (;;)
+            while(true)
 		{
 			if (Host.client.active !== true)
 				return;
@@ -2285,7 +2290,7 @@ SV.LinkEdict = function(ent, touch_triggers)
 		return;
 
 	var node = SV.areanodes[0];
-	for (;;)
+    while(true)
 	{
 		if (node.axis === -1)
 			break;

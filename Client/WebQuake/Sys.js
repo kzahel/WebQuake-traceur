@@ -1,6 +1,8 @@
 Sys = {};
 
-Sys.events = ['onbeforeunload', 'oncontextmenu', 'onfocus', 'onkeydown', 'onkeyup', 'onmousedown', 'onmouseup', 'onmousewheel', 'onunload', 'onwheel'];
+//Sys.events = ['onbeforeunload', 'oncontextmenu', 'onfocus', 'onkeydown', 'onkeyup', 'onmousedown', 'onmouseup', 'onmousewheel', 'onunload', 'onwheel'];
+Sys.events = ['onfocus', 'onkeydown', 'onkeyup', 'onmousedown', 'onmouseup', 'onmousewheel', 'onwheel'];
+//Sys.events = [];
 
 Sys.Quit = function()
 {
@@ -43,7 +45,8 @@ Sys.Error = function(text)
 		for (; i < Con.text.length; ++i)
 			console.log(Con.text[i].text);
 	}
-	alert(text);
+	//alert(text);
+    console.error(text);
 	throw new Error(text);
 };
 
@@ -141,12 +144,16 @@ window.onload = function()
 	Sys.oldtime = Date.now() * 0.001;
 
 	Sys.Print('Host.Init\n');
-	Host.Init();
+	await Host.A_Init();
+	Sys.Print('Host.Init\'d\n');
 
 	for (i = 0; i < Sys.events.length; ++i)
 		window[Sys.events[i]] = Sys[Sys.events[i]];
 
-	Sys.frame = setInterval(Host.Frame, 1000.0 / 60.0);
+	//Sys.frame = setInterval(Host.Frame, 1000.0 / 60.0);
+    //Sys.frame = setInterval(Host.Frame, 1000.0 / 10.0);
+
+    Sys.frame = requestAnimationFrame( Host.FrameTick )
 };
 
 Sys.onbeforeunload = function()

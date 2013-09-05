@@ -2,9 +2,15 @@ W = {};
 
 W.lumps = [];
 
-W.LoadWadFile = function(filename)
+W.LoadWadFile = function(){
+    console.error('use A_')
+    debugger;
+}
+
+W.A_LoadWadFile = function(filename)
 {
-	var base = COM.LoadFile(filename);
+    var base;
+        await base = COM.A_LoadFile(filename);
 	if (base == null)
 		Sys.Error('W.LoadWadFile: couldn\'t load ' + filename);
 	var view = new DataView(base);

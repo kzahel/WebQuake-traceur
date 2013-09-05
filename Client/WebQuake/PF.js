@@ -439,8 +439,9 @@ PF.precache_sound = function()
 	SV.server.sound_precache[i] = s;
 };
 
-PF.precache_model = function()
+PF.A_precache_model = function()
 {
+    console.log("PF.A_precache_model");
 	if (SV.server.loading !== true)
 		PR.RunError('PF.Precache_*: Precache can only be done in spawn functions');
 	var s = PR.GetString(PR.globals_int[4]);
@@ -453,7 +454,9 @@ PF.precache_model = function()
 			return;
 	}
 	SV.server.model_precache[i] = s;
-	SV.server.models[i] = Mod.ForName(s, true);
+    var tmp;
+    await tmp =  Mod.A_ForName(s, true);
+	SV.server.models[i] = tmp
 };
 
 PF.coredump = function()
@@ -753,7 +756,7 @@ PF.builtin = [
 	PF.checkclient,
 	PF.Find,
 	PF.precache_sound,
-	PF.precache_model,
+	PF.A_precache_model,
 	PF.stuffcmd,
 	PF.findradius,
 	PF.bprint,
@@ -808,7 +811,7 @@ PF.builtin = [
 	PF.cvar_set,
 	PF.centerprint,
 	PF.ambientsound,
-	PF.precache_model,
+	PF.A_precache_model,
 	PF.precache_sound,
 	PF.precache_file,
 	PF.setspawnparms

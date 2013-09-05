@@ -178,7 +178,7 @@ ED.Count = function()
 ED.ParseGlobals = function(data)
 {
 	var keyname, key;
-	for (;;)
+    while(true)
 	{
 		data = COM.Parse(data);
 		if (COM.token.charCodeAt(0) === 125)
@@ -270,7 +270,7 @@ ED.ParseEdict = function(data, ent)
 		for (i = 0; i < PR.entityfields; ++i)
 			ent.v_int[i] = 0;
 	}
-	for (;;)
+    while(true)
 	{
 		data = COM.Parse(data);
 		if (COM.token.charCodeAt(0) === 125)
@@ -323,7 +323,7 @@ ED.LoadFromFile = function(data)
 	var ent, spawnflags, inhibit = 0, func;
 	PR.globals_float[PR.globalvars.time] = SV.server.time;
 
-	for (;;)
+    while(true)
 	{
 		data = COM.Parse(data);
 		if (data == null)
