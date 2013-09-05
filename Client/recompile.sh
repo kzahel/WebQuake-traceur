@@ -1,0 +1,1 @@
+../../traceur-compiler/traceur --private-names false --deferred-functions true --out traced/out.js WebQuake/*.js

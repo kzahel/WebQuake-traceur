@@ -1,0 +1,36 @@
+{
+    "name": "Web Quake",
+    "description": "Quake by id Software packaged for Chrome OS",
+    "version": "0.0.4",
+    "manifest_version": 2,
+    "offline_enabled": true,
+    "permissions": [
+        {"fileSystem":["write"]},
+        {"socket":[
+            "tcp-connect",
+            "udp-bind::",
+            "tcp-listen::",
+            "udp-send-to::"
+        ]},
+        "identity",
+        "pointerLock",
+        "storage",
+        "http://*/",
+        "https://*/",
+        "https://www.google-analytics.com/",
+        "https://www.googleapis.com/"
+    ],
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
+    "icons": { 
+        "16": "earthquake-icone-4663-16.png", 
+        "32": "earthquake-icone-4663-32.png", 
+        "48": "earthquake-icone-4663-48.png", 
+        "64": "earthquake-icone-4663-64.png",
+        "96": "earthquake-icone-4663-96.png",
+        "128": "earthquake-icone-4663-128.png"
+    }
+}
