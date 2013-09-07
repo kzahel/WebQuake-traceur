@@ -598,6 +598,7 @@ CL.ClearState = function()
 
 CL.Disconnect = function()
 {
+    console.log("CL.Disconnect");
 	S.StopAllSounds();
 	if (CL.cls.demoplayback === true)
 		CL.StopPlayback();
@@ -921,6 +922,12 @@ CL.ReadFromServer = function()
                 console.log('not doing ReadFromServer::CL.GetMessage, frame lock active')
                 break; 
             }
+            if (SV.A_SpawnServer_lock) { 
+                console.log('not doing ReadFromServer::CL.GetMessage, loading thing')
+                break; 
+            }
+
+
 		ret = CL.GetMessage();
             //console.log("CL.ReadFromServer",ret)
 		if (ret === -1)
@@ -1526,10 +1533,10 @@ CL.ParseServerMessage = function()
 			CL.SignonReply();
 			continue;
 		case Protocol.svc.killedmonster:
-			//++CL.state.stats[Def.stat.monsters]; // TODO FIX
+			++CL.state.stats[Def.stat.monsters];
 			continue;
 		case Protocol.svc.foundsecret:
-			//++CL.state.stats[Def.stat.secrets]; // TODO FIX
+			++CL.state.stats[Def.stat.secrets];
 			continue;
 		case Protocol.svc.updatestat:
 			i = MSG.ReadByte();

@@ -94,11 +94,8 @@ COM.LoadFile = function(){
 
 COM.A_CheckRegistered = function()
 {
-	Cvar.Set('registered', '1');
-	Con.Print('Playing registered version.\n');
-    return;
-
-
+	//Cvar.Set('registered', '1');
+	//Con.Print('Playing registered version.\n');
     var h;
     await h = COM.A_LoadFile('gfx/pop.lmp');
 	if (h == null)
@@ -136,7 +133,6 @@ COM.A_CheckRegistered = function()
 	}
 	Cvar.Set('registered', '1');
 	Con.Print('Playing registered version.\n');
-    //return DeferSoon()
 };
 
 COM.InitArgv = function(argv)
@@ -228,7 +224,14 @@ COM.WriteTextFile = function(filename, data)
 	filename = filename.toLowerCase();
 	try
 	{
+	    if (chrome.app) {
+		var key = 'Quake.' + COM.searchpaths[COM.searchpaths.length - 1].filename + '/' + filename;
+		var sett = {}
+		sett[key] = data;
+		chrome.storage.local.set(sett);
+	    } else {
 		localStorage.setItem('Quake.' + COM.searchpaths[COM.searchpaths.length - 1].filename + '/' + filename, data);
+	    }
 	}
 	catch (e)
 	{
@@ -281,7 +284,7 @@ COM.A_LoadFile = function(filename)
 				if ((xhr.status >= 200) && (xhr.status <= 299) && (xhr.responseText.length === file.filelen))
 				{
 
-					Sys.Print('PackFile: ' + search.filename + '/pak' + j + '.pak : ' + filename + '\n')
+					//Sys.Print('PackFile: ' + search.filename + '/pak' + j + '.pak : ' + filename + '\n')
 					Draw.EndDisc();
 					return Q.strmem(xhr.responseText);
 				}
@@ -400,9 +403,9 @@ COM.A_InitFilesystem = function()
 	if (search != null)
 		await COM.A_AddGameDirectory(search);
     else {
-        console.log('adding id1')
+        //console.log('adding id1')
 		await COM.A_AddGameDirectory('id1');
-        console.log('added id1')
+        //console.log('added id1')
     }
 		
 	if (COM.rogue === true)
@@ -422,9 +425,9 @@ COM.A_InitFilesystem = function()
 	}
 */
 
-        console.log('adding id1')
+        //console.log('adding id1')
 		await COM.A_AddGameDirectory('id1');
-        console.log('added id1')
+        //console.log('added id1')
 
 	COM.gamedir = [COM.searchpaths[COM.searchpaths.length - 1]];
     //console.log('initfilesystem returnin')

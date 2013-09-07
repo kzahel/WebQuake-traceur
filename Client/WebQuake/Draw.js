@@ -48,24 +48,24 @@ await cb = COM.A_LoadFile('gfx/conback.lmp');
 		Draw.CharToConback(ver.charCodeAt(i), 59829 - ((ver.length - i) << 3), 186);
 	Draw.conback.texnum = GL.LoadPicTexture(Draw.conback);
 
-    console.log('gettin cachepic...')
+    //console.log('gettin cachepic...')
     var tmp;
 	await tmp = Draw.A_CachePic('loading');
     Draw.loading = tmp;
-    console.log('got cachepic...')
+    //console.log('got cachepic...')
 	Draw.loadingElem = document.getElementById('loading');
 	Draw.loadingElem.src = Draw.PicToDataURL(Draw.loading);
 
-    console.log('settin bgimage')
+    //console.log('settin bgimage')
 	document.body.style.backgroundImage = 'url("' + Draw.PicToDataURL(Draw.PicFromWad('BACKTILE')) + '")';
-    console.log('set bgimage')
+    //console.log('set bgimage')
 
 	GL.CreateProgram('Character', ['uCharacter', 'uDest', 'uOrtho'], ['aPoint'], ['tTexture']);
 	GL.CreateProgram('Fill', ['uRect', 'uOrtho', 'uColor'], ['aPoint'], []);
 	GL.CreateProgram('Pic', ['uRect', 'uOrtho'], ['aPoint'], ['tTexture']);
 	GL.CreateProgram('PicTranslate', ['uRect', 'uOrtho', 'uTop', 'uBottom'], ['aPoint'], ['tTexture', 'tTrans']);
 
-    console.log('drawinit returnin')
+    //console.log('drawinit returnin')
 };
 
 Draw.Character = function(x, y, num)
@@ -115,7 +115,7 @@ Draw.StringWhite = function(x, y, str)
 
 Draw.PicFromWad = function(name)
 {
-    console.log('picfromwad',name)
+    //console.log('picfromwad',name)
 	var buf = W.GetLumpName(name);
 	var p = {};
 	var view = new DataView(buf, 0, 8);
@@ -220,7 +220,7 @@ Draw.EndDisc = function()
 
 Draw.PicToDataURL = function(pic)
 {
-    console.log('pictodataurl')
+    //console.log('pictodataurl')
 	var canvas = document.createElement('canvas');
 	canvas.width = pic.width;
 	canvas.height = pic.height;
@@ -233,6 +233,6 @@ Draw.PicToDataURL = function(pic)
 		trans32[i] = COM.LittleLong(VID.d_8to24table[pic.data[i]] + 0xff000000);
 	data.data.set(new Uint8Array(trans));
 	ctx.putImageData(data, 0, 0);
-    console.log('pictodataurl returning')
+    //console.log('pictodataurl returning')
 	return canvas.toDataURL();
 };

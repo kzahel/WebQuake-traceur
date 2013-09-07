@@ -204,8 +204,10 @@ M.SinglePlayer_Key = function(k)
 		case 0:
 			if (SV.server.active === true)
 			{
+			    if (! (window.chrome && chrome.app)) {
 				if (confirm('Are you sure you want to start a new game?') !== true)
 					return;
+			    }
 				Cmd.text += 'disconnect\n';
 			}
 			Key.dest.value = Key.dest.game;
@@ -374,8 +376,10 @@ M.Save_Key = function(k)
 	case Key.k.del:
 		if (M.removable[M.load_cursor] !== true)
 			return;
+	    if (! (window.chrome && chrome.app)) {
 		if (confirm('Delete selected game?') !== true)
 			return;
+	    }
 		localStorage.removeItem('Quake.' + COM.gamedir[0].filename + '/s' + M.load_cursor + '.sav');
 		M.ScanSaves();
 	}
@@ -967,7 +971,7 @@ await tmp = Draw.A_CachePic('box_tl');
 	 M.box_tl = tmp
 await tmp = Draw.A_CachePic('box_ml');
 	 M.box_ml = tmp
-    console.log('loaded some stuff ...')
+    //console.log('loaded some stuff ...')
     await tmp = Draw.A_CachePic('box_bl');
 	 M.box_bl = tmp
     await tmp = Draw.A_CachePic('box_tm');

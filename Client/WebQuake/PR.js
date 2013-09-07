@@ -299,6 +299,9 @@ PR.A_LoadProgs = function()
 {
     var progs;
         await progs = COM.A_LoadFile('progs.dat');
+    PR.LoadProgs_Loaded(progs);
+};
+PR.LoadProgs_Loaded = function(progs) {
 	if (progs == null)
 		Sys.Error('PR.LoadProgs: couldn\'t load progs.dat');
 	Con.DPrint('Programs occupy ' + (progs.byteLength >> 10) + 'K.\n');

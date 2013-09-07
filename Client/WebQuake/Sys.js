@@ -18,7 +18,7 @@ Sys.Quit = function()
 		document.getElementById('end2').style.display = 'inline';
 	else
 		document.getElementById('end1').style.display = 'inline';
-	throw new Error;
+	//throw new Error;
 };
 
 Sys.Print = function(text)

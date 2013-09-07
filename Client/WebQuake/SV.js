@@ -668,6 +668,12 @@ SV.SaveSpawnparms = function()
 
 SV.A_SpawnServer = function(server)
 {
+    console.log("A_SpawnServer. SET LOCK");
+    if (SV.A_SpawnServer_lock) {
+	console.error("ALREADY spawning!")
+	return;
+    }
+    SV.A_SpawnServer_lock = true;
 	var i;
 
 	if (NET.hostname.string.length === 0)
@@ -676,7 +682,7 @@ SV.A_SpawnServer = function(server)
 	SCR.centertime_off = 0.0;
 
 	Con.DPrint('SpawnServer: ' + server + '\n');
-	SV.svs.changelevel_issued = false;
+	//SV.svs.changelevel_issued = false; // DO THIS LATER, async now
 
 	if (SV.server.active === true)
 	{
@@ -695,8 +701,9 @@ SV.A_SpawnServer = function(server)
 
 	Con.DPrint('Clearing memory\n');
 	Mod.ClearAll();
-
+    console.log("LoadProgs")
 	await PR.A_LoadProgs();
+    console.log("Done LoadProgs")
 
 	SV.server.edicts = [];
 	var ed;
@@ -739,7 +746,9 @@ SV.A_SpawnServer = function(server)
 	SV.server.lastchecktime = 0.0;
 	SV.server.modelname = 'maps/' + server + '.bsp';
     var tmp
+    console.log("Load level")
     await tmp = Mod.A_ForName(SV.server.modelname);
+    console.log("Loaded level")
 	SV.server.worldmodel = tmp
 	if (SV.server.worldmodel == null)
 	{
@@ -794,6 +803,9 @@ SV.A_SpawnServer = function(server)
 		Host.client.edict.v_int[PR.entvars.netname] = PR.netnames + (i << 5);
 		SV.SendServerinfo(Host.client);
 	}
+    console.log("SERVER SPAWNED")
+    SV.A_SpawnServer_lock = false;
+	SV.svs.changelevel_issued = false; // moved this to later
 	Con.DPrint('Server spawned.\n');
 };
 

@@ -263,8 +263,13 @@ Host.timecount = 0;
 Host._FrameLock = false;
 
 Host.FrameTick = function(timestamp) {
+    if (SV.A_SpawnServer_lock) {
+        console.log('spawning server, skipping tick..')
+        requestAnimationFrame(Host.FrameTick)
+        return;
+    }
     if (Host._FrameLock) {
-        console.log('Frame Lock, skipping tick')
+        //console.log('Frame Lock, skipping tick')
         requestAnimationFrame(Host.FrameTick)
         return;
     }
@@ -304,15 +309,15 @@ Host.A_Init = function()
 	Cmd.Init();
 	V.Init();
 	Chase.Init();
-    console.log("COM INITING")
+    //console.log("COM INITING")
 	await COM.A_Init();
-    console.log("COM inited")
+    //console.log("COM inited")
 	Host.InitLocal();
-    console.log("loadin wad")
+    //console.log("loadin wad")
 	await W.A_LoadWadFile('gfx.wad');
 
 //	W.LoadWadFile('gfx.wad');
-    console.log("loaded wad")
+    //console.log("loaded wad")
 	Key.Init();
 	Con.Init();
 	PR.Init();
@@ -320,31 +325,31 @@ Host.A_Init = function()
 	NET.Init();
 	SV.Init();
 	Con.Print(Def.timedate);
-    console.log("VID initn")
+    //console.log("VID initn")
 	await VID.A_Init();
-    console.log("VID initED. draw init now")
+    //console.log("VID initED. draw init now")
 	await Draw.A_Init();
-    console.log('draw INITd...');
+    //console.log('draw INITd...');
 	await SCR.A_Init();
-    console.log('SCR INITd...');
+    //console.log('SCR INITd...');
 	R.Init();
-    console.log('R INITd...');
+    //console.log('R INITd...');
 	await S.A_Init();
-    console.log('sound INITD...');
+    //console.log('sound INITD...');
 	await M.A_Init();
-    console.log('menu INITD...');
+    //console.log('menu INITD...');
 	await CDAudio.A_Init();
-    console.log('cdaudio INITD...');
+    //console.log('cdaudio INITD...');
 	await Sbar.A_Init();
-    console.log('sbar INITD...');
+    //console.log('sbar INITD...');
 	await CL.A_Init();
-    console.log('cl INITD...');
+    //console.log('cl INITD...');
 	IN.Init();
-    console.log('IN INITD...');
+    //console.log('IN INITD...');
 	Cmd.text = 'exec quake.rc\n' + Cmd.text;
 	Host.initialized = true;
 	Sys.Print('========Quake Initialized=========\n');
-    return DeferSoon();
+
 };
 
 Host.Shutdown = function()
