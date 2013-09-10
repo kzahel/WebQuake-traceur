@@ -2,7 +2,7 @@
 chrome.app.runtime.onLaunched.addListener(function(launchData) {
     console.log('app loaunch')
     
-    //var args = "+skill 3 +map e1m1"
+    //var args = "+skill 3 +map start"
     var args = "";
     
     chrome.app.window.create('Client/WebQuake.htm' + '?' + encodeURIComponent(args),
@@ -12,5 +12,9 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
                              function(w) {
                                  console.log('window created');
                              })
+
+    chrome.runtime.onMessage.addListener( function(msg) {
+	console.log('got msg from ext',msg)
+    })
 
 })

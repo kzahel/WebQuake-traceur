@@ -261,13 +261,23 @@ Host.timetotal = 0.0;
 Host.timecount = 0;
 
 Host._FrameLock = false;
-
+Host._gamepad = null;
 Host.FrameTick = function(timestamp) {
+/* // not needed, because moed something else
     if (SV.A_SpawnServer_lock) {
         console.log('spawning server, skipping tick..')
         requestAnimationFrame(Host.FrameTick)
         return;
     }
+*/
+    Host._gamepad = (navigator.webkitGetGamepads && navigator.webkitGetGamepads()[0]);
+
+    if (Host._gamepad) {
+	Sys.ongamepadpoll(Host._gamepad);
+    } else {
+	//Host._gamepad = (navigator.webkitGetGamepads && navigator.webkitGetGamepads()[0]);
+    }
+
     if (Host._FrameLock) {
         //console.log('Frame Lock, skipping tick')
         requestAnimationFrame(Host.FrameTick)

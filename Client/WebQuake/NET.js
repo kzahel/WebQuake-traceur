@@ -44,7 +44,7 @@ NET.Connect = function(host)
 			Con.Print('trying...\n');
 			NET.start_time = NET.time;
 			NET.reps = 0;
-			throw 'NET.Connect';
+			//throw 'NET.Connect'; // wtf ?
 		}
 		if (ret != null)
 			return ret;

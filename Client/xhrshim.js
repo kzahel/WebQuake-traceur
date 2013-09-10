@@ -9,7 +9,7 @@ var xhrsend = function(xhr,url) {
     xhr.send(); 
     return deferred; 
 }; 
-traceur.options.experimental=true;
+//traceur.options.experimental=true;
 
 function localStorageGetItem(key) {
     //console.log("localStorageGetItem",key);

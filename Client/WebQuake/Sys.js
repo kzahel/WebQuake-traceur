@@ -215,6 +215,35 @@ Sys.onmousedown = function(e)
 	e.preventDefault();
 };
 
+Sys.ongamepadpoll = function(e) { // on joystick event
+    // gamepad events are not edge triggered
+
+    Key.gamepadlastaxes = e.axes;
+
+    if (Key.gamepadlastbuttons) {
+	
+	for (var i=0; i<e.buttons.length; i++) {
+	    if (e.buttons[i] != Key.gamepadlastbuttons[i]) {
+
+		if (e.buttons[i]) {
+		    Key.Event(Key.k['joy'+(i+1)], true)
+		    //console.log("JOY"+(i+1), true)
+		} else {
+		    Key.Event(Key.k['joy'+(i+1)])
+		    //console.log("JOY"+(i+1), false)
+		}
+	    }
+	}
+	Key.gamepadlastbuttons = e.buttons;
+
+
+    } else {
+	// first time gamepad was registered
+	// likely no buttons were pressed. move on
+	Key.gamepadlastbuttons = e.buttons;
+    }
+}
+
 Sys.onmouseup = function(e)
 {
 	var key;
@@ -243,6 +272,14 @@ Sys.onmousewheel = function(e)
 	Key.Event(key);
 	e.preventDefault();
 };
+
+
+if (window.chrome && chrome.app) {
+    chrome.app.window.current().onClosed.addListener( function() {
+	chrome.runtime.sendMessage({msg:'Host.Shutdown', data:null}) // not being received by background page :-(
+	Host.Shutdown();
+    })
+}
 
 Sys.onunload = function()
 {

@@ -40,6 +40,19 @@ Key.k = {
 	mouse2: 201,
 	mouse3: 202,
 
+    joy1: 205,
+    joy2: 206,
+    joy3: 207,
+    joy4: 208,
+    joy5: 209,
+    joy6: 210,
+    joy7: 211,
+    joy8: 212,
+    joy9: 213,
+    joy10: 214,
+    joy11: 215,
+    joy12: 216,
+
 	mwheelup: 239,
 	mwheeldown: 240
 };
@@ -61,7 +74,8 @@ Key.bindings = [];
 Key.consolekeys = [];
 Key.shift = [];
 Key.down = [];
-
+Key.gamepadlastbuttons = null; // last gamepad state
+Key.gamepadlastaxes = null; // last gamepad state (axes)
 Key.names = [
 	{name: 'TAB', keynum: Key.k.tab},
 	{name: 'ENTER', keynum: Key.k.enter},
@@ -96,6 +110,18 @@ Key.names = [
 	{name: 'MOUSE1', keynum: Key.k.mouse1},
 	{name: 'MOUSE2', keynum: Key.k.mouse2},
 	{name: 'MOUSE3', keynum: Key.k.mouse3},
+	{name: 'JOY1', keynum: Key.k.joy1},
+	{name: 'JOY2', keynum: Key.k.joy2},
+	{name: 'JOY3', keynum: Key.k.joy3},
+	{name: 'JOY4', keynum: Key.k.joy4},
+	{name: 'JOY5', keynum: Key.k.joy5},
+	{name: 'JOY6', keynum: Key.k.joy6},
+	{name: 'JOY7', keynum: Key.k.joy7},
+	{name: 'JOY8', keynum: Key.k.joy8},
+	{name: 'JOY9', keynum: Key.k.joy9},
+	{name: 'JOY10', keynum: Key.k.joy10},
+	{name: 'JOY11', keynum: Key.k.joy11},
+	{name: 'JOY12', keynum: Key.k.joy12},
 	{name: 'PAUSE', keynum: Key.k.pause},
 	{name: 'MWHEELUP', keynum: Key.k.mwheelup},
 	{name: 'MWHEELDOWN', keynum: Key.k.mwheeldown},
@@ -390,7 +416,7 @@ Key.Event = function(key, down)
 		else if (Key.dest.value === Key.dest.menu)
 			M.Keydown(key);
 		else
-			M.ToggleMenu_f();
+			M.ToggleMenu_f(); // TODO remove mouse lock
 		return;
 	}
 
