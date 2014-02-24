@@ -352,7 +352,7 @@ CL.AdjustAngles = function()
 
     if (Key.gamepadlastaxes) {
 	// joystick/gamepad movement
-	console.log(Key.gamepadlastaxes)
+        //console.log(Key.gamepadlastaxes)
 	// TODO make customizable?
 	angles[1] += speed * CL.yawspeed.value * Key.gamepadlastaxes[0] * -1;
 	angles[1] = Vec.Anglemod(angles[1]);
@@ -402,7 +402,7 @@ CL.BaseMove = function()
 
     if (Key.gamepadlastaxes && Key.gamepadlastaxes[2]) {
 	cmd.sidemove += CL.sidespeed.value * CL.m_side.value * Key.gamepadlastaxes[2];
-	console.log('sidemove',cmd.sidemove);
+        //console.log('sidemove',cmd.sidemove);
 	//cmd.sidemove = CL.sidespeed.value * Key.gamepadlastaxes[2];
     }
 
@@ -418,14 +418,14 @@ CL.BaseMove = function()
 
     if (Key.gamepadlastaxes && Key.gamepadlastaxes[3]) {
 	cmd.forwardmove += CL.forwardspeed.value * CL.m_forward.value * Key.gamepadlastaxes[3] * -1;
-	console.log('forwardmove',cmd.forwardmove);
+        //console.log('forwardmove',cmd.forwardmove);
 	//cmd.forwardmove = CL.forwardspeed.value * Key.gamepadlastaxes[3] * -1;
     }
 
 
 	if ((CL.kbuttons[CL.kbutton.speed].state & 1) !== 0)
 	{
-	    console.log('speed',CL.movespeedkey.value);
+	    //console.log('speed',CL.movespeedkey.value);
 		cmd.forwardmove *= CL.movespeedkey.value;
 		cmd.sidemove *= CL.movespeedkey.value;
 		cmd.upmove *= CL.movespeedkey.value;
@@ -623,7 +623,7 @@ CL.ClearState = function()
 
 CL.Disconnect = function()
 {
-    console.log("CL.Disconnect");
+    //console.log("CL.Disconnect");
 	S.StopAllSounds();
 	if (CL.cls.demoplayback === true)
 		CL.StopPlayback();
@@ -944,17 +944,17 @@ CL.ReadFromServer = function()
     while(true)
 	{
             if (Host._FrameLock) { 
-                console.log('not doing ReadFromServer::CL.GetMessage, frame lock active')
+                //console.log('not doing ReadFromServer::CL.GetMessage, frame lock active')
                 break; 
             }
             if (SV.A_SpawnServer_lock) { 
-                console.log('not doing ReadFromServer::CL.GetMessage, loading thing')
+                //console.log('not doing ReadFromServer::CL.GetMessage, loading thing')
                 break; 
             }
 
 
 		ret = CL.GetMessage();
-            console.log("CL.ReadFromServer",ret)
+            //console.log("CL.ReadFromServer",ret)
 		if (ret === -1)
 			Host.Error('CL.ReadFromServer: lost server connection');
 		if (ret === 0)
@@ -1168,7 +1168,7 @@ CL.KeepaliveMessage = function()
 CL.A_ParseServerInfo = function()
 {
 
-    console.log("%cPARSE SERVER INFO","color:#f00")
+    //console.log("%cPARSE SERVER INFO","color:#f00")
 
 	Con.DPrint('Serverinfo packet received.\n');
 	CL.ClearState();
@@ -1204,7 +1204,7 @@ CL.A_ParseServerInfo = function()
 	for (nummodels = 1; true; ++nummodels)
 	{
 		str = MSG.ReadString();
-            console.log("MODEL PRECACHE",str)
+            //console.log("MODEL PRECACHE",str)
 		if (str.length === 0)
 			break;
 		model_precache[nummodels] = str;
@@ -1213,7 +1213,7 @@ CL.A_ParseServerInfo = function()
 	for (numsounds = 1; true; ++numsounds)
 	{
 		str = MSG.ReadString();
-            console.log("SOUND PRECACHE",str)
+            //console.log("SOUND PRECACHE",str)
 		if (str.length === 0)
 			break;
 		sound_precache[numsounds] = str;
@@ -1223,13 +1223,13 @@ CL.A_ParseServerInfo = function()
 	for (i = 1; i < nummodels; ++i)
 	{
             var tmp;
-            console.log('loadin model',i);
+            //console.log('loadin model',i);
             await tmp = Mod.A_ForName(model_precache[i]);
-            console.log('loaded model',i)
+            //console.log('loaded model',i)
 		CL.state.model_precache[i] = tmp;
 		if (CL.state.model_precache[i] == null)
 		{
-                    console.log("model NOT FOUND")
+                    //console.log("model NOT FOUND")
 			Con.Print('Model ' + model_precache[i] + ' not found\n');
 			return;
 		}
@@ -1249,7 +1249,7 @@ CL.A_ParseServerInfo = function()
 	CL.EntityNum(0).model = CL.state.worldmodel;
 	R.NewMap();
                     Host._FrameLock = false;
-                    console.log("PARSED server info. releasing lock")
+                    //console.log("PARSED server info. releasing lock")
 
 	Host.noclip_anglehack = false;
 };
@@ -1454,7 +1454,7 @@ CL.ParseServerMessage = function()
 
 		CL.Shownet('svc_' + CL.svc_strings[cmd]);
 
-            console.log("%cSERVER COMMAND","color:#f00",cmd, CL.svc_strings[cmd])
+            //console.log("%cSERVER COMMAND","color:#f00",cmd, CL.svc_strings[cmd])
 
 		switch (cmd)
 		{
@@ -1487,7 +1487,7 @@ CL.ParseServerMessage = function()
 			V.ParseDamage();
 			continue;
 		case Protocol.svc.serverinfo:
-                    console.log("PARSIN server info. setting lock")
+                    //console.log("PARSIN server info. setting lock")
                     Host._FrameLock = true;
 			CL.A_ParseServerInfo();
 			SCR.recalc_refdef = true;
@@ -1613,7 +1613,7 @@ CL.temp_entities = [];
 
 CL.A_InitTEnts = function()
 {
-    console.log('InitTEnts');
+    //console.log('InitTEnts');
     var tmp;
     await tmp = S.A_PrecacheSound('wizard/hit.wav');
 	 CL.sfx_wizhit = tmp
