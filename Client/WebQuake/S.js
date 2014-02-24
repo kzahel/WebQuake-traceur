@@ -73,6 +73,22 @@ S.A_Init = function()
     Con.sfx_talk = tmp;
 };
 
+S.NoteOff = function(node)
+{
+    if ((node.playbackState === 1) || (node.playbackState === 2))
+    {
+        try { node.noteOff(0.0); } catch (e) {}
+    }
+}
+
+S.NoteOn = function(node)
+{
+    if ((node.playbackState === 0) || (node.playbackState === 3))
+    {
+        try { node.noteOn(0.0); } catch (e) {}
+    }
+}
+
 S.A_PrecacheSound = function(name)
 {
 	if (S.nosound.value !== 0)
@@ -112,7 +128,7 @@ S.PickChannel = function(entnum, entchannel)
 				channel.sfx = null;
 				if (channel.nodes != null)
 				{
-					channel.nodes.source.noteOff(0.0);
+                                    S.NoteOff(channel.nodes.source);
 					channel.nodes = null;
 				}
 				else if (channel.audio != null)
@@ -249,7 +265,7 @@ S.StartSound = function(entnum, entchannel, sfx, origin, vol, attenuation)
 			skip = Math.random() * 0.1;
 			if (skip >= sfx.cache.length)
 			{
-				nodes.source.noteOn(0.0);
+                            S.NoteOn(nodes.source);
 				break;
 			}
 			target_chan.pos += skip;
@@ -257,7 +273,8 @@ S.StartSound = function(entnum, entchannel, sfx, origin, vol, attenuation)
 			nodes.source.noteGrainOn(0.0, skip, nodes.source.buffer.length - skip);
 			break;
 		}
-		nodes.source.noteOn(0.0);
+            S.NoteOn(nodes.source);
+
 	}
 	else
 	{
@@ -286,7 +303,7 @@ S.StopSound = function(entnum, entchannel)
 			ch.sfx = null;
 			if (ch.nodes != null)
 			{
-				ch.nodes.source.noteOff(0.0);
+                            S.NoteOff(ch.nodes.source);
 				ch.nodes = null;
 			}
 			else if (ch.audio != null)
@@ -311,7 +328,7 @@ S.StopAllSounds = function()
 		ch = S.ambient_channels[i];
 		ch.master_vol = 0.0;
 		if (ch.nodes != null)
-			ch.nodes.source.noteOff(0.0);
+                    S.NoteOff(ch.nodes.source);
 		else if (ch.audio != null)
 			ch.audio.pause();
 	}
@@ -322,7 +339,7 @@ S.StopAllSounds = function()
 		if (ch == null)
 			continue;
 		if (ch.nodes != null)
-			ch.nodes.source.noteOff(0.0);
+                    S.NoteOff(ch.nodes.source);
 		else if (ch.audio != null)
 			ch.audio.pause();
 	}
@@ -331,7 +348,7 @@ S.StopAllSounds = function()
 	if (S.context != null)
 	{
 		for (i = 0; i < S.static_channels.length; ++i)
-			S.static_channels[i].nodes.source.noteOff(0.0);
+                    S.NoteOff(S.static_channels[i].nodes.source);
 	}
 	else
 	{
@@ -434,8 +451,7 @@ S.UpdateAmbientSounds = function()
 			ch.master_vol = 0.0;
 			if (ch.nodes != null)
 			{
-				if (ch.nodes.source.playbackState !== 0)
-					ch.nodes.source.noteOff(0.0);
+                            S.NoteOff(ch.nodes.source);
 			}
 			else if (ch.audio != null)
 			{
@@ -472,8 +488,7 @@ S.UpdateAmbientSounds = function()
 		{
 			if (S.context != null)
 			{
-				if (ch.nodes.source.playbackState !== 0)
-					ch.nodes.source.noteOff(0.0);
+                            S.NoteOff(ch.nodes.source);
 			}
 			else
 			{
@@ -487,8 +502,7 @@ S.UpdateAmbientSounds = function()
 		if (S.context != null)
 		{
 			ch.nodes.gain.gain.value = ch.master_vol * S.volume.value;
-			if (ch.nodes.source.playbackState === 0)
-				ch.nodes.source.noteOn(0.0);
+                    S.NoteOn(ch.nodes.source);
 		}
 		else
 		{
@@ -607,8 +621,7 @@ S.UpdateStaticSounds = function()
 			ch = S.static_channels[i];
 			if ((ch.leftvol === 0.0) && (ch.rightvol === 0.0))
 			{
-				if (ch.nodes.source.playbackState !== 0)
-					ch.nodes.source.noteOff(0.0);
+                            S.NoteOff(ch.nodes.source);
 				continue;
 			}
 			if (ch.leftvol > 1.0)
@@ -617,8 +630,7 @@ S.UpdateStaticSounds = function()
 				ch.rightvol = 1.0;
 			ch.nodes.gain0.gain.value = ch.leftvol * S.volume.value;
 			ch.nodes.gain1.gain.value = ch.rightvol * S.volume.value;
-			if (ch.nodes.source.playbackState === 0)
-				ch.nodes.source.noteOn(0.0);
+                    S.NoteOn(ch.nodes.source);
 		}
 	}
 	else

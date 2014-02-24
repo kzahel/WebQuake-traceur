@@ -265,7 +265,7 @@ Host._gamepad = null;
 Host.FrameTick = function(timestamp) {
 /* // not needed, because moed something else
     if (SV.A_SpawnServer_lock) {
-        console.log('spawning server, skipping tick..')
+        //console.log('spawning server, skipping tick..')
         requestAnimationFrame(Host.FrameTick)
         return;
     }

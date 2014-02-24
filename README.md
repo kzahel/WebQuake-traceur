@@ -13,3 +13,4 @@ https://chrome.google.com/webstore/detail/web-quake/ibkbfanmkmadbbgggonficloplen
 2. Copy id1/pak*.pak files into Client/id1
 3. run Client/recompile.sh (requires nodejs and https://github.com/google/traceur-compiler)
 
+Note: pin traceur-complier to bec06c8df128a7d6ea40ebc5552be0382b1287dd
